@@ -1,0 +1,19 @@
+.input__label {
+  display: block;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.input__field {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  outline: none;
+  transition: 0.2s;
+
+  &:focus {
+    box-shadow: 0 0 10px -2px rgba(0, 0, 0, 0.5);
+  }
+}
