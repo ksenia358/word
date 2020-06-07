@@ -1,0 +1,20 @@
+//Global settings
+@import "global/normalize";
+@import "global/helpers";
+@import "global/mixins";
+@import "global/variables";
+@import "../../assets/fonts/opensans.css";
+
+* {
+box-sizing: border-box; }
+
+body, html {
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  line-height: normal;
+  height: 100%; }
+
+body {
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+  color: #181818; }

@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import "./assets/styles/normalize.scss";
-import "./assets/styles/helpers.scss";
-// import "./assets/fonts/roboto/roboto.css";
+import "./assets/styles/style.scss";
 
 Vue.config.productionTip = false
 
