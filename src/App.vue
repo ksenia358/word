@@ -1,16 +1,17 @@
 <template>
   <div id="app">
-    <Button class="full" type="button" title="Я кнопка!"></Button>
+    <img alt="Vue logo" src="./assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
 
 <script>
-import Button from './components/Elements/Button/Button.vue'
+  import HelloWorld from './components/HelloWorld.vue'
 
-export default {
-  name: 'App',
-  components: {
-    Button
+  export default {
+    name: 'App',
+    components: {
+      HelloWorld
+    }
   }
-}
 </script>
