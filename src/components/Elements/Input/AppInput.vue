@@ -1,7 +1,7 @@
 <template>
     <div class="input">
         <label :for="id" class="input__label">{{ label }}</label>
-        <input :id="id" :type="type" :name="name" class="input__field">
+        <input @change="onChange" :id="id" :type="type" :name="name" class="input__field">
     </div>
 </template>
 
@@ -25,6 +25,11 @@
             name: {
                 type: String,
                 required: true
+            },
+            onChange: {
+                type: Function,
+                required: false,
+                default() {}
             }
         }
     }

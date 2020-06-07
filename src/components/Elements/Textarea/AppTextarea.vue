@@ -1,7 +1,7 @@
 <template>
     <div class="textarea">
         <label :for="id" class="textarea__label">{{ label }}</label>
-        <textarea :id="id" :name="name" class="textarea__field"></textarea>
+        <textarea @change="onChange" :id="id" :name="name" class="textarea__field"></textarea>
     </div>
 </template>
 
@@ -20,6 +20,11 @@
             name: {
                 type: String,
                 required: true
+            },
+            onChange: {
+                type: Function,
+                required: false,
+                default() {}
             }
         }
     }
