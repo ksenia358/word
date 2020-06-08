@@ -1,5 +1,5 @@
 <template>
-  <button :class="getClass" :type="type" @click="Click">
+  <button :class="getClass" :type="type" @click="Click" :disabled="isDisabled">
     <template>
       {{title}}
     </template>
@@ -21,6 +21,11 @@ export default {
       default: null
     },
     fullwidth: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    isDisabled: {
       type: Boolean,
       required: false,
       default: false
