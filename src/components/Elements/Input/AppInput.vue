@@ -1,7 +1,14 @@
 <template>
-    <div class="input">
-        <label :for="id" class="input__label">{{ label }}</label>
-        <input @change="onChange" :id="id" :type="type" :name="name" class="input__field">
+    <div :class="{'checkable': isCheckable}" class="input">
+        <label v-if="label" :for="id" class="input__label">{{ label }}</label>
+        <input @change="onChange"
+               :value="value"
+               :id="id"
+               :type="type"
+               :name="name"
+               :disabled="isDisabled"
+               class="input__field"
+        >
     </div>
 </template>
 
@@ -11,11 +18,22 @@
         props: {
             label: {
                 type: String,
-                required: true
+                required: false,
+                default: ''
             },
             id: {
-                type: String,
+                type: [String, Number],
                 required: true
+            },
+            value: {
+                type: [String, Number],
+                required: false,
+                default: ''
+            },
+            isDisabled: {
+                type: Boolean,
+                required: false,
+                default: false
             },
             type: {
                 type: String,
@@ -30,6 +48,11 @@
                 type: Function,
                 required: false,
                 default() {}
+            }
+        },
+        computed: {
+            isCheckable() {
+                return this.type === 'radio' || this.type === 'checkbox';
             }
         }
     }
