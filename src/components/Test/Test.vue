@@ -11,7 +11,7 @@
                   :id="answer"
                   name="option"
                   :label="answer"
-                  :key="answer"
+                  :key="answer + answersStartKeyValue"
                   :is-disabled="answerDisabled"
                   :on-change="selectAnswer"
         ></AppInput>
@@ -49,6 +49,7 @@
                     status: false
                 },
                 answers: [],
+                answersStartKeyValue: 0,
                 currentWordIndex: 0,
                 buttonDisabled: true,
                 answerDisabled: false,
@@ -130,6 +131,7 @@
                 }
 
                 if (this.words.length !== 0) {
+                    this.answersStartKeyValue++;
                     this.result.text = '';
                     this.result.status = false;
                     this.currentWordIndex = Math.floor(Math.random() * this.words.length);
@@ -140,7 +142,7 @@
             },
             getAnswers() {
                 if (this.answers.length > 0) {
-                    this.answers.length = 0;
+                    this.answers = [];
                 }
 
                 const randomCorrectAnswerIndex = Math.floor(Math.random() * this.words[this.currentWordIndex].translations.length);
