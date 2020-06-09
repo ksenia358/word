@@ -2,19 +2,19 @@
   <div id="app" class="page">
     <Header></Header>
     <div class="main">
-      <Test></Test>
+      <AddWords></AddWords>
     </div>
   </div>
 </template>
 
 <script>
   import Header from './components/Header/Header.vue'
-  import Test from './components/Test/Test';
+  import AddWords from './components/AddWords/AddWords.vue'
 
   export default {
     name: 'App',
     components: {
-      Header, Test
+      Header, AddWords
     }
   }
 </script>
