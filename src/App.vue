@@ -2,19 +2,19 @@
   <div id="app" class="page">
     <Header></Header>
     <div class="main">
-      <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <AddWords></AddWords>
     </div>
   </div>
 </template>
 
 <script>
   import Header from './components/Header/Header.vue'
-  import HelloWorld from './components/HelloWorld.vue'
+  import AddWords from './components/AddWords/AddWords.vue'
 
   export default {
     name: 'App',
     components: {
-      Header, HelloWorld
+      Header, AddWords
     }
   }
 </script>
