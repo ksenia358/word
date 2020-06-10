@@ -1,23 +1,34 @@
 <template>
   <section class="test">
-    <h2 class="visually-hidden">Тесты</h2>
+    <h2 class="visually-hidden">Тест</h2>
     <div v-if="words.length > 0" class="test__wrapper">
       <h3 class="test__word">{{ words[currentWordIndex].word }}</h3>
       <p class="test__result">{{ result.text }}</p>
       <form @submit.prevent="">
-        <AppInput v-for="(answer) in answers"
-                  type="radio"
-                  :value="answer"
-                  :id="answer"
-                  name="option"
-                  :label="answer"
-                  :key="answer + answersStartKeyValue"
-                  :is-disabled="answerDisabled"
-                  :on-change="selectAnswer"
-        ></AppInput>
-        <Button type="button" title="Далее"
-                :disabled="buttonDisabled"
+        <template v-if="testType === 'options'">
+          <AppInput v-for="(answer) in answers"
+                    type="radio"
+                    :value="answer"
+                    :id="answer"
+                    name="option"
+                    :label="answer"
+                    :key="answer + answersStartKeyValue"
+                    :is-disabled="answerDisabled"
+                    :on-change="checkAnswer"
+          ></AppInput>
+        </template>
+        <template v-else>
+          <AppInput :id="words[currentWordIndex].word"
+                    name="introduce"
+                    label="Перевод"
+                    :is-disabled="answerDisabled"
+                    :on-change="checkAnswer"
+          ></AppInput>
+        </template>
+        <Button :disabled="buttonDisabled"
                 :on-click="nextQuestion"
+                type="button"
+                title="Далее"
         ></Button>
       </form>
     </div>
@@ -30,12 +41,17 @@
     import Button from '../Elements/Button/Button';
 
     export default {
-        name: "Test",
+        name: "Tests",
         components: {
             AppInput,
             Button
         },
         props: {
+            testType: {
+                type: String, // options | introduce
+                required: false,
+                default: 'options'
+            },
             answersCount: {
                 type: Number,
                 required: false,
@@ -114,31 +130,63 @@
             };
         },
         methods: {
-            selectAnswer(evt) {
+            checkAnswer(evt) {
                 this.answerDisabled = true;
                 this.buttonDisabled = false;
+                const answer = evt.target.value.toLowerCase();
+                let isCorrect = false;
 
-                if (this.words[this.currentWordIndex].translations.indexOf(evt.target.value) !== -1) {
-                    this.result.text = 'Верно!';
-                    this.result.status = true;
-                } else {
-                    this.result.text = 'Провал! Даже не пытайся съехать на том, что ты в школе французкий учил, дурик!';
+                switch (this.testType) {
+                  case 'options':
+                      if (this.words[this.currentWordIndex].translations.indexOf(evt.target.value) !== -1) {
+                          this.result.text = 'Верно!';
+                          this.result.status = true;
+                      } else {
+                          this.result.text = 'Провал! Даже не пытайся съехать на том, что ты в школе французкий учил, дурик!';
+                      }
+
+                      break;
+                  case 'introduce':
+                      for (let translation of this.words[this.currentWordIndex].translations) {
+                          translation = translation.toLowerCase();
+
+                          if (translation === answer) {
+                              isCorrect = true;
+                              break;
+                          }
+                      }
+
+                      if (isCorrect) {
+                          this.result.text = `Верно! Это ${answer}`;
+                      } else {
+                          this.result.text = 'Ага, щас, не верно!';
+                      }
+
+                      break;
                 }
             },
             nextQuestion() {
-                if (this.result.status && this.words.length > 0) {
-                    this.words.splice(this.currentWordIndex, 1);
-                }
+                if (this.words.length > 0) {
+                    if (this.testType === 'options') {
+                        if (this.result.status && this.words.length > 0) {
+                            this.words.splice(this.currentWordIndex, 1);
+                        }
 
-                if (this.words.length !== 0) {
-                    this.answersStartKeyValue++;
-                    this.result.text = '';
-                    this.result.status = false;
-                    this.currentWordIndex = Math.floor(Math.random() * this.words.length);
-                    this.getAnswers();
-                    this.answerDisabled = false;
-                    this.buttonDisabled = true;
+                        this.answersStartKeyValue++;
+                        this.result.status = false;
+                        this.getAnswers();
+                    } else {
+                        this.words.splice(this.currentWordIndex, 1);
+                    }
+
+                    this.reset();
                 }
+            },
+            reset() {
+                this.result.text = '';
+                this.currentWordIndex = Math.floor(Math.random() * this.words.length);
+                this.answerDisabled = false;
+                this.buttonDisabled = true;
             },
             getAnswers() {
                 if (this.answers.length > 0) {
@@ -196,7 +244,10 @@
         },
         beforeMount() {
             this.mixArray(this.words);
-            this.getAnswers();
+
+            if (this.testType === 'options') {
+                this.getAnswers();
+            }
         }
     }
 </script>
