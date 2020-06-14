@@ -129,7 +129,8 @@ export default {
         this.state.list.push(obj);
       }
       if (value!=='') {
-        this.state.list[this.state.indexWord].translation.push(value)
+        let val = value.replace(/\s+/g, ' ').trim();
+        this.state.list[this.state.indexWord].translation.push(val)
         this.state.count = this.state.count+1;
         this.state.translation.buttonClick = true;
         this.state.translation.error = false;
@@ -157,7 +158,8 @@ export default {
         const value = textarea.value;
         if (value!==''){
           let index = this.state.list[this.state.indexWord].translation.length
-          this.state.list[this.state.indexWord].translation[index] = value;
+          let val = value.replace(/\s+/g, ' ').trim();
+          this.state.list[this.state.indexWord].translation[index] = val;
         }
       }
       this.state.showEdit = true;
@@ -167,7 +169,8 @@ export default {
       const textarea = document.getElementById('edit'),
             value = textarea.value;
       if (value!=='') {
-        this.state.list[this.state.indexWord].translation[key] = value;
+        let val = value.replace(/\s+/g, ' ').trim();
+        this.state.list[this.state.indexWord].translation[key] = val;
         this.state.editInput.error = true;
         this.state.editInput.buttonClick = false;
         this.state.showEdit = false;
@@ -206,7 +209,8 @@ export default {
             this.state.word.error = true;
             this.state.translation.buttonClick = false;
             this.state.translation.error = true;
-            this.state.list[this.state.indexWord].word = valueInput;
+            let valInput = valueInput.replace(/\s+/g, ' ').trim();
+            this.state.list[this.state.indexWord].word = valInput;
             this.state.list[this.state.indexWord].translation = this.state.list[this.state.indexWord].translation.filter(el => el !== null);
             this.state.indexWord=this.state.list.length
             this.state.showForm = false;
@@ -224,7 +228,8 @@ export default {
         }
         if ((this.state.list[this.state.indexWord].translation.length !== 0 || valueTextarea!=='') && valueInput!=='') {
           if (valueTextarea!=='') {
-            this.state.list[this.state.indexWord].translation[this.state.count] = valueTextarea;
+            let valTextarea = valueTextarea.replace(/\s+/g, ' ').trim();
+            this.state.list[this.state.indexWord].translation[this.state.count] = valTextarea;
           }
           validData()
         }
