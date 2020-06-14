@@ -1,5 +1,38 @@
 <template>
   <div class="">
+    <template>
+      <p>Будет ли у вас проверочный диктант?</p>
+      <Button
+          title="Да"
+          @click.native="edit($event, key)">
+      </Button>
+      <Button
+          title="Нет"
+          @click.native="edit($event, key)">
+      </Button>
+    </template>
+
+    <template>
+      <AppInput id="word"
+                label="Введите дату диктанта:"
+                name="word"
+      ></AppInput>
+      <Button
+          title="Ок"
+          @click.native="edit($event, key)">
+      </Button>
+    </template>
+
+    <template>
+      <p>Слова добавлены в&nbsp;словарь.</p>
+      <p><span class="bold">15.06.2005</span> добавленные вами слова будут занесены в&nbsp;основной словарь.</p>
+      <p><span class="bold">До&nbsp;15.06.2005</span> слова будут находиться в&nbsp;разделе &laquo;Диктант&raquo;, где вы&nbsp;сможете себя по&nbsp;ним тестировать.</p>
+      <Button
+          title="Ок"
+          @click.native="edit($event, key)">
+      </Button>
+    </template>
+
     <template v-if="state.showForm">
       <AppInput id="word"
                 label="Слово:"
@@ -7,57 +40,57 @@
                 :value="state.list[state.indexWord] ? state.list[state.indexWord].word: ''"
                 :on-change="InputChange"
       ></AppInput>
-    <div class="red" v-show="state.word.error==true && state.word.buttonClick==true">Введите слово</div>
-    <div v-if="state.list[state.indexWord]">
-      <div v-for="(n,key) in state.list[state.indexWord].translation" :key="key" class="listWords">
-        <div class="medium" v-if="state.indexEdit!==key">{{n}}</div>
-        <AppTextarea v-if="state.showEdit && state.indexEdit==key"
-                     id="edit"
-                     name="edit"
-                     label=""
-                     :value="n">
-        </AppTextarea>
-        <div class="red" v-if="state.indexEdit==key && state.editInput.error==true && state.editInput.buttonClick==true">Введите новый перевод или удалите</div>
-        <div class="row">
-          <div class="item" v-if="state.indexEdit!==key">
-            <Button
-                    title="Редактировать"
-                    @click.native="edit($event, key)"
-                    class="blueButton">
-            </Button>
-          </div>
-          <div class="item" v-if="state.indexEdit==key">
-            <Button title="Ок"
-                    @click.native="editWord($event, key)">
-            </Button>
-          </div>
-          <div class="item">
-            <Button class="redButton"
-                    title="Удалить"
-                    @click.native="countMinus($event, key)">
-            </Button>
+      <div class="red" v-show="state.word.error==true && state.word.buttonClick==true">Введите слово</div>
+      <div v-if="state.list[state.indexWord]">
+        <div v-for="(n,key) in state.list[state.indexWord].translation" :key="key" class="listWords">
+          <div class="medium" v-if="state.indexEdit!==key">{{n}}</div>
+          <AppTextarea v-if="state.showEdit && state.indexEdit==key"
+                       id="edit"
+                       name="edit"
+                       label=""
+                       :value="n">
+          </AppTextarea>
+          <div class="red" v-if="state.indexEdit==key && state.editInput.error==true && state.editInput.buttonClick==true">Введите новый перевод или удалите</div>
+          <div class="row">
+            <div class="item" v-if="state.indexEdit!==key">
+              <Button
+                      title="Редактировать"
+                      @click.native="edit($event, key)"
+                      class="blueButton">
+              </Button>
+            </div>
+            <div class="item" v-if="state.indexEdit==key">
+              <Button title="Ок"
+                      @click.native="editWord($event, key)">
+              </Button>
+            </div>
+            <div class="item">
+              <Button class="redButton"
+                      title="Удалить"
+                      @click.native="countMinus($event, key)">
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div>
-      <AppTextarea v-if="!state.showEdit"
-                   id="translation"
-                   name="translation"
-                   label="Перевод"
-                   :on-change="textareaChange">
-      </AppTextarea>
-      <div class="red" v-if="state.translation.error==true && state.translation.buttonClick==true">Напишите перевод</div>
+      <div>
+        <AppTextarea v-if="!state.showEdit"
+                     id="translation"
+                     name="translation"
+                     label="Перевод"
+                     :on-change="textareaChange">
+        </AppTextarea>
+        <div class="red" v-if="state.translation.error==true && state.translation.buttonClick==true">Напишите перевод</div>
+        <Button v-if="!state.showEdit"
+                title="Ещё"
+                @click.native="countPlus($event)">
+        </Button>
+      </div>
       <Button v-if="!state.showEdit"
-              title="Ещё"
-              @click.native="countPlus($event)">
+              class="full"
+              title="Добавить"
+              :onClick="addWord">
       </Button>
-    </div>
-    <Button v-if="!state.showEdit"
-            class="full"
-            title="Добавить"
-            :onClick="addWord">
-    </Button>
     </template>
     <template v-if="!state.showForm">
       <Button title="Добавить ещё"
@@ -205,11 +238,14 @@ export default {
           valueTextarea = textarea.value,
           valueInput = input.value,
           validData = () => {
+            let valInput = valueInput.replace(/\s+/g, ' ').trim();
+
+
+
             this.state.word.buttonClick = false;
             this.state.word.error = true;
             this.state.translation.buttonClick = false;
             this.state.translation.error = true;
-            let valInput = valueInput.replace(/\s+/g, ' ').trim();
             this.state.list[this.state.indexWord].word = valInput;
             this.state.list[this.state.indexWord].translation = this.state.list[this.state.indexWord].translation.filter(el => el !== null);
             this.state.indexWord=this.state.list.length
