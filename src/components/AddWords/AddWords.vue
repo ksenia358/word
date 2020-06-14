@@ -1,45 +1,44 @@
 <template>
   <div class="">
-    <AppInput id="word"
-              label="Слово:"
-              name="word"
-              :on-change="InputChange"
-    ></AppInput>
+    <template v-if="state.showForm">
+      <AppInput id="word"
+                label="Слово:"
+                name="word"
+                :value="state.list[state.indexWord] ? state.list[state.indexWord].word: ''"
+                :on-change="InputChange"
+      ></AppInput>
     <div class="red" v-show="state.word.error==true && state.word.buttonClick==true">Введите слово</div>
-
-    <div v-if="state.count>0">
-      <template v-for="item in state.list[state.indexWord]">
-          <div v-for="(n,key) in item" :key="key" class="listWords">
-            <div class="medium" v-if="state.indexEdit!==key">{{n}}</div>
-            <AppTextarea v-if="state.showEdit && state.indexEdit==key"
-                         id="edit"
-                         name="edit"
-                         label=""
-                         :value="n">
-            </AppTextarea>
-            <div class="red" v-if="state.indexEdit==key && state.editInput.error==true && state.editInput.buttonClick==true">Введите новый перевод или удалите</div>
-            <div class="row">
-              <div class="item" v-if="state.indexEdit!==key">
-                <Button
-                        title="Редактировать"
-                        @click.native="edit($event, key)"
-                        class="blueButton">
-                </Button>
-              </div>
-              <div class="item" v-if="state.indexEdit==key">
-                <Button title="Ок"
-                        @click.native="editWord($event, key)">
-                </Button>
-              </div>
-              <div class="item">
-                <Button class="redButton"
-                        title="Удалить"
-                        @click.native="countMinus($event, key)">
-                </Button>
-              </div>
-            </div>
+    <div v-if="state.list[state.indexWord]">
+      <div v-for="(n,key) in state.list[state.indexWord].translation" :key="key" class="listWords">
+        <div class="medium" v-if="state.indexEdit!==key">{{n}}</div>
+        <AppTextarea v-if="state.showEdit && state.indexEdit==key"
+                     id="edit"
+                     name="edit"
+                     label=""
+                     :value="n">
+        </AppTextarea>
+        <div class="red" v-if="state.indexEdit==key && state.editInput.error==true && state.editInput.buttonClick==true">Введите новый перевод или удалите</div>
+        <div class="row">
+          <div class="item" v-if="state.indexEdit!==key">
+            <Button
+                    title="Редактировать"
+                    @click.native="edit($event, key)"
+                    class="blueButton">
+            </Button>
           </div>
-      </template>
+          <div class="item" v-if="state.indexEdit==key">
+            <Button title="Ок"
+                    @click.native="editWord($event, key)">
+            </Button>
+          </div>
+          <div class="item">
+            <Button class="redButton"
+                    title="Удалить"
+                    @click.native="countMinus($event, key)">
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
     <div>
       <AppTextarea v-if="!state.showEdit"
@@ -54,14 +53,28 @@
               @click.native="countPlus($event)">
       </Button>
     </div>
-    <Button class="full"
+    <Button v-if="!state.showEdit"
+            class="full"
             title="Добавить"
             :onClick="addWord">
     </Button>
-    <div v-for="(item,key) in state.list" :key="key">
-      <div class="bold">{{item.word}}</div>
-      <div v-for="(n,key) in item.translation" :key="key">{{n}}</div>
-    </div>
+    </template>
+    <template v-if="!state.showForm">
+      <Button title="Добавить ещё"
+              :onClick="addMore">
+      </Button>
+      <Button title="Закончить">
+      </Button>
+      <div v-for="(item,key) in state.list" :key="key">
+        <div class="bold">{{item.word}}</div>
+        <div v-for="(n,key) in item.translation" :key="key">{{n}}</div>
+        <Button
+            title="Редактировать"
+            class="blueButton"
+            @click.native="editAddedWord($event, key)">
+        </Button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -77,9 +90,11 @@ export default {
   data() {
     return {
       state: {
+        add: true,
         count: 0,
         indexWord: 0,
-        list:[],
+        showForm: true,
+        list:[ { "word": "", "translation": [] } ],
         showEdit:false,
         indexEdit:null,
         word: {
@@ -106,15 +121,12 @@ export default {
       const elem = evt.target,
             textarea = elem.parentElement.getElementsByTagName('textarea'),
             value = textarea[0].value;
-      if (this.state.list.length[this.state.indexWord]==undefined) {
+      if (this.state.list[this.state.indexWord]==undefined) {
         let obj={
           word:'',
           translation:[]
         }
         this.state.list.push(obj);
-      }
-      if (!this.state.list[this.state.indexWord].translation){
-        this.state.list[this.state.indexWord].translation=[]
       }
       if (value!=='') {
         this.state.list[this.state.indexWord].translation.push(value)
@@ -139,7 +151,15 @@ export default {
       this.state.editInput.error = true;
       this.state.editInput.buttonClick = false;
     },
-    edit(evt, key){
+    edit(evt, key) {
+      const textarea = document.getElementById('translation');
+      if (textarea) {
+        const value = textarea.value;
+        if (value!==''){
+          let index = this.state.list[this.state.indexWord].translation.length
+          this.state.list[this.state.indexWord].translation[index] = value;
+        }
+      }
       this.state.showEdit = true;
       this.state.indexEdit = key;
     },
@@ -187,9 +207,10 @@ export default {
             this.state.translation.buttonClick = false;
             this.state.translation.error = true;
             this.state.list[this.state.indexWord].word = valueInput;
-            textarea.value=''
-            input.value=''
-            this.state.indexWord=this.state.indexWord+1
+            this.state.list[this.state.indexWord].translation = this.state.list[this.state.indexWord].translation.filter(el => el !== null);
+            this.state.indexWord=this.state.list.length
+            this.state.showForm = false;
+            this.state.add = true;
           },
           createObj = () => {
             let obj={
@@ -198,26 +219,9 @@ export default {
             }
             this.state.list.push(obj);
           };
-      if (this.state.list.length==0) {
-        if (valueInput=='' && valueTextarea=='') {
-          emptyData()
+        if (this.state.list[this.state.indexWord]==undefined) {
+          createObj()
         }
-        else if (valueInput!=='' && valueTextarea=='') {
-          noTranslation()
-        }
-        else if (valueInput=='' && valueTextarea!==''){
-          noWord()
-        }
-        else {
-          if (this.state.list.length[this.state.indexWord]==undefined) {
-            createObj()
-          }
-          this.state.list[this.state.indexWord].translation.push(valueTextarea)
-          validData()
-        }
-      }
-      else {
-        createObj()
         if ((this.state.list[this.state.indexWord].translation.length !== 0 || valueTextarea!=='') && valueInput!=='') {
           if (valueTextarea!=='') {
             this.state.list[this.state.indexWord].translation[this.state.count] = valueTextarea;
@@ -233,9 +237,20 @@ export default {
         else {
           emptyData()
         }
+    },
+    addMore(){
+      if (this.state.list[this.state.indexWord]==undefined) {
+        let obj={
+          word:'',
+          translation:[]
+        }
+        this.state.list.push(obj);
       }
-
-
+      this.state.showForm=true;
+    },
+    editAddedWord(evt, key){
+      this.state.showForm=true;
+      this.state.indexWord=key
     },
     InputChange(){
     },
