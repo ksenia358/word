@@ -1,39 +1,39 @@
 <template>
-  <section class="test">
-    <h2 class="visually-hidden">Тест</h2>
-    <div v-if="words.length > 0" class="test__wrapper">
-      <h3 class="test__word">{{ words[currentWordIndex].word }}</h3>
-      <p class="test__result">{{ result.text }}</p>
-      <form @submit.prevent="">
-        <template v-if="testType === 'options'">
-          <AppInput v-for="(answer) in answers"
-                    type="radio"
-                    :value="answer"
-                    :id="answer"
-                    name="option"
-                    :label="answer"
-                    :key="answer + answersStartKeyValue"
-                    :is-disabled="answerDisabled"
-                    :on-change="checkAnswer"
-          ></AppInput>
-        </template>
-        <template v-else>
-          <AppInput :id="words[currentWordIndex].word"
-                    name="introduce"
-                    label="Перевод"
-                    :is-disabled="answerDisabled"
-                    :on-change="checkAnswer"
-          ></AppInput>
-        </template>
-        <Button :disabled="buttonDisabled"
-                :on-click="nextQuestion"
-                type="button"
-                title="Далее"
-        ></Button>
-      </form>
-    </div>
-    <div v-else class="empty-words">Слова закончились</div>
-  </section>
+    <section class="test">
+        <h2 class="visually-hidden">Тест</h2>
+        <div v-if="words.length > 0" class="test__wrapper">
+            <h3 class="test__word">{{ words[currentWordIndex].word }}</h3>
+            <p class="test__result">{{ result.text }}</p>
+            <form @submit.prevent="">
+                <template v-if="testType === 'options'">
+                    <AppInput v-for="(answer) in answers"
+                              type="radio"
+                              :value="answer"
+                              :id="answer"
+                              name="option"
+                              :label="answer"
+                              :key="answer + answersStartKeyValue"
+                              :is-disabled="answerDisabled"
+                              :on-change="checkAnswer"
+                    ></AppInput>
+                </template>
+                <template v-else>
+                    <AppInput :id="words[currentWordIndex].word"
+                              name="introduce"
+                              label="Перевод"
+                              :is-disabled="answerDisabled"
+                              :on-change="checkAnswer"
+                    ></AppInput>
+                </template>
+                <Button :disabled="buttonDisabled"
+                        :on-click="nextQuestion"
+                        type="button"
+                        title="Далее"
+                ></Button>
+            </form>
+        </div>
+        <div v-else class="empty-words">Слова закончились</div>
+    </section>
 </template>
 
 <script>
@@ -137,32 +137,32 @@
                 let isCorrect = false;
 
                 switch (this.testType) {
-                  case 'options':
-                      if (this.words[this.currentWordIndex].translations.indexOf(evt.target.value) !== -1) {
-                          this.result.text = 'Верно!';
-                          this.result.status = true;
-                      } else {
-                          this.result.text = 'Провал! Даже не пытайся съехать на том, что ты в школе французкий учил, дурик!';
-                      }
+                    case 'options':
+                        if (this.words[this.currentWordIndex].translations.indexOf(evt.target.value) !== -1) {
+                            this.result.text = 'Верно!';
+                            this.result.status = true;
+                        } else {
+                            this.result.text = 'Провал! Даже не пытайся съехать на том, что ты в школе французкий учил, дурик!';
+                        }
 
-                      break;
-                  case 'introduce':
-                      for (let translation of this.words[this.currentWordIndex].translations) {
-                          translation = translation.toLowerCase();
+                        break;
+                    case 'introduce':
+                        for (let translation of this.words[this.currentWordIndex].translations) {
+                            translation = translation.toLowerCase();
 
-                          if (translation === answer) {
-                              isCorrect = true;
-                              break;
-                          }
-                      }
+                            if (translation === answer) {
+                                isCorrect = true;
+                                break;
+                            }
+                        }
 
-                      if (isCorrect) {
-                          this.result.text = `Верно! Это ${answer}`;
-                      } else {
-                          this.result.text = 'Ага, щас, не верно!';
-                      }
+                        if (isCorrect) {
+                            this.result.text = `Верно! Это ${answer}`;
+                        } else {
+                            this.result.text = 'Ага, щас, не верно!';
+                        }
 
-                      break;
+                        break;
                 }
             },
             nextQuestion() {
