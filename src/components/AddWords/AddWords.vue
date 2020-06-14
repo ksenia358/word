@@ -1,35 +1,37 @@
 <template>
   <div class="">
-    <template>
+    <template v-if="state.finish==true && state.test==null">
       <p>Будет ли у вас проверочный диктант?</p>
-      <Button
-          title="Да">
+      <Button id="yes"
+              @click.native="test($event)"
+              title="Да">
       </Button>
-      <Button
-          title="Нет">
-      </Button>
-    </template>
-
-    <template>
-      <AppInput id="word"
-                label="Введите дату диктанта:"
-                name="word"
-      ></AppInput>
-      <Button
-          title="Ок">
+      <Button id="no"
+              @click.native="test($event)"
+              title="Нет">
       </Button>
     </template>
 
-    <template>
-      <p>Слова добавлены в&nbsp;словарь.</p>
-      <p><span class="bold">15.06.2005</span> добавленные вами слова будут занесены в&nbsp;основной словарь.</p>
-      <p><span class="bold">До&nbsp;15.06.2005</span> слова будут находиться в&nbsp;разделе &laquo;Диктант&raquo;, где вы&nbsp;сможете себя по&nbsp;ним тестировать.</p>
-      <Button
-          title="Ок">
+    <template v-if="state.test==true">
+      <label>Введите дату диктанта:</label>
+      <datepicker v-model="state.dateTest"
+                  :language="ru"
+                  :disabled-dates="disabledDates"
+                  :format="format"
+      ></datepicker>
+    </template>
+
+    <template v-if="state.test!==null">
+      <p v-if="state.test==false">Слова добавлены в&nbsp;словарь.</p>
+      <template v-if="state.dateTest!==null">
+        <p><span class="bold">{{state.dateTest}}</span> добавленные вами слова будут занесены в&nbsp;основной словарь.</p>
+        <p><span class="bold">До&nbsp;{{state.dateTest}}</span> слова будут находиться в&nbsp;разделе &laquo;Диктант&raquo;, где вы&nbsp;сможете себя по&nbsp;ним тестировать.</p>
+      </template>
+      <Button title="Ок">
       </Button>
     </template>
 
-    <template v-if="state.showForm">
+    <template v-if="state.showForm && state.finish==false">
       <AppInput id="word"
                 label="Слово:"
                 name="word"
@@ -88,11 +90,12 @@
               :onClick="addWord">
       </Button>
     </template>
-    <template v-if="!state.showForm">
+    <template v-if="!state.showForm && state.finish==false">
       <Button title="Добавить ещё"
               :onClick="addMore">
       </Button>
-      <Button title="Закончить">
+      <Button title="Закончить"
+              @click.native="finish">
       </Button>
       <div v-for="(item,key) in state.list" :key="key">
         <div class="bold">{{item.word}}</div>
@@ -111,15 +114,25 @@
 import AppInput from '../Elements/Input/AppInput.vue'
 import AppTextarea from '../Elements/Textarea/AppTextarea.vue'
 import Button from '../Elements/Button/Button.vue'
+import Datepicker from 'vuejs-datepicker';
+import {ru} from 'vuejs-datepicker/dist/locale'
+
 export default {
   name: 'AddWords',
   components: {
-    AppInput, AppTextarea, Button
+    AppInput, AppTextarea, Button, Datepicker
   },
   data() {
     return {
+      ru: ru,
+      format: 'dd.MM.yyyy',
+      disabledDates: {
+        to: new Date(Date.now()-86400000)
+      },
       state: {
-        add: true,
+        dateTest: null,
+        finish: false,
+        test: null,
         count: 0,
         indexWord: 0,
         showForm: true,
@@ -137,7 +150,7 @@ export default {
         editInput: {
           error: true,
           buttonClick: false
-        }
+        },
       },
     }
   },
@@ -289,10 +302,21 @@ export default {
       this.state.showForm=true;
       this.state.indexWord=key
     },
+    finish(){
+      this.state.finish=true;
+    },
     InputChange(){
     },
     textareaChange(){
-    }
+    },
+    test(evt){
+      if(evt.target.id==='yes') {
+        this.state.test=true
+      }
+      else {
+        this.state.test=false
+      }
+    },
   }
 }
 </script>
