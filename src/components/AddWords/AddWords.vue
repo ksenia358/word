@@ -24,8 +24,8 @@
     <template v-if="state.test!==null">
       <p v-if="state.test==false">Слова добавлены в&nbsp;словарь.</p>
       <template v-if="state.dateTest!==null">
-        <p><span class="bold">{{state.dateTest}}</span> добавленные вами слова будут занесены в&nbsp;основной словарь.</p>
-        <p><span class="bold">До&nbsp;{{state.dateTest}}</span> слова будут находиться в&nbsp;разделе &laquo;Диктант&raquo;, где вы&nbsp;сможете себя по&nbsp;ним тестировать.</p>
+        <p><span class="bold">{{formatDate}}</span> добавленные вами слова будут занесены в&nbsp;основной словарь.</p>
+        <p><span class="bold">До&nbsp;{{formatDate}}</span> слова будут находиться в&nbsp;разделе &laquo;Диктант&raquo;, где вы&nbsp;сможете себя по&nbsp;ним тестировать.</p>
       </template>
       <Button title="Ок">
       </Button>
@@ -157,6 +157,17 @@ export default {
   props: {
   },
   computed: {
+    formatDate() {
+      let d = new Date(this.state.dateTest),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return [day, month, year ].join('.');
+    }
   },
   methods: {
     countPlus(evt){
