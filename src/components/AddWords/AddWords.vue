@@ -3,12 +3,10 @@
     <template>
       <p>Будет ли у вас проверочный диктант?</p>
       <Button
-          title="Да"
-          @click.native="edit($event, key)">
+          title="Да">
       </Button>
       <Button
-          title="Нет"
-          @click.native="edit($event, key)">
+          title="Нет">
       </Button>
     </template>
 
@@ -18,8 +16,7 @@
                 name="word"
       ></AppInput>
       <Button
-          title="Ок"
-          @click.native="edit($event, key)">
+          title="Ок">
       </Button>
     </template>
 
@@ -28,8 +25,7 @@
       <p><span class="bold">15.06.2005</span> добавленные вами слова будут занесены в&nbsp;основной словарь.</p>
       <p><span class="bold">До&nbsp;15.06.2005</span> слова будут находиться в&nbsp;разделе &laquo;Диктант&raquo;, где вы&nbsp;сможете себя по&nbsp;ним тестировать.</p>
       <Button
-          title="Ок"
-          @click.native="edit($event, key)">
+          title="Ок">
       </Button>
     </template>
 
