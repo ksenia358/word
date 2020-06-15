@@ -174,7 +174,7 @@ export default {
     countPlus(evt){
       const elem = evt.target,
             textarea = elem.parentElement.getElementsByTagName('textarea'),
-            value = textarea[0].value;
+            value = /^\s*$/.test(textarea[0].value) ? '':textarea[0].value;
       if (this.state.list[this.state.indexWord]==undefined) {
         let obj={
           word:'',
@@ -183,7 +183,7 @@ export default {
         this.state.list.push(obj);
       }
       if (value!=='') {
-        let val = value.replace(/\s+/g, ' ').trim();
+        let val = value.trim();
         this.state.list[this.state.indexWord].translation.push(val)
         this.state.count = this.state.count+1;
         this.state.translation.buttonClick = true;
@@ -209,7 +209,7 @@ export default {
     edit(evt, key) {
       const textarea = document.getElementById('translation');
       if (textarea) {
-        const value = textarea.value;
+        const value = /^\s*$/.test(textarea.value) ? '':textarea.value;
         if (value!==''){
           let index = this.state.list[this.state.indexWord].translation.length
           let val = value.replace(/\s+/g, ' ').trim();
@@ -221,7 +221,7 @@ export default {
     },
     editWord(evt, key){
       const textarea = document.getElementById('edit'),
-            value = textarea.value;
+            value = /^\s*$/.test(textarea.value) ? '':textarea.value;
       if (value!=='') {
         let val = value.replace(/\s+/g, ' ').trim();
         this.state.list[this.state.indexWord].translation[key] = val;
@@ -256,10 +256,10 @@ export default {
           },
           textarea = document.getElementById('translation'),
           input = document.getElementById('word'),
-          valueTextarea = textarea.value,
-          valueInput = input.value,
+          valueTextarea = /^\s*$/.test(textarea.value) ? '':textarea.value,
+          valueInput = /^\s*$/.test(input.value) ? '':input.value,
           validData = () => {
-            let valInput = valueInput.replace(/\s+/g, ' ').trim();
+            let valInput = valueInput.trim();
 
 
 
@@ -284,7 +284,7 @@ export default {
           createObj()
         }
         if ((this.state.list[this.state.indexWord].translation.length !== 0 || valueTextarea!=='') && valueInput!=='') {
-          let valTextarea = valueTextarea.replace(/\s+/g, ' ').trim();
+          let valTextarea = valueTextarea.trim();
           if (valueTextarea!=='') {
             this.state.list[this.state.indexWord].translation.push(valTextarea);
           }
