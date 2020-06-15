@@ -2,19 +2,19 @@
   <div id="app" class="page">
     <Header></Header>
     <div class="main">
-      <OptionsTest></OptionsTest>
+      <InputTest></InputTest>
     </div>
   </div>
 </template>
 
 <script>
   import Header from './components/Header/Header.vue';
-  import OptionsTest from './components/Tests/OptionsTest';
+  import InputTest from './components/Tests/InputTest';
 
   export default {
     name: 'App',
     components: {
-      OptionsTest,
+      InputTest,
       Header,
     }
   }

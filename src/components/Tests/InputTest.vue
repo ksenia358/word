@@ -1,20 +1,16 @@
 <template>
-    <section class="options-test">
-        <h2 class="visually-hidden">Тест с вариантами</h2>
-        <div v-if="words.length > 0" class="options-test__wrapper">
-            <span class="options-test__word">{{ words[currentWordIndex].word }}</span>
-            <AppInput v-for="(option, index) in options"
-                      :key="option.value + optionsKeyValue"
-                      type="radio"
-                      :value="option.value"
-                      :id="option.value"
-                      name="option"
-                      :label="option.value"
-                      :is-disabled="optionDisabled"
-                      :on-change="optionChecked.bind(null, index)"
+    <section class="input-test">
+        <h2 class="visually-hidden">Тест с вводом перевода</h2>
+        <div v-if="words.length > 0" class="input-test__wrapper">
+            <span class="input-test__word">{{ words[currentWordIndex].word }}</span>
+            <AppInput :id="words[currentWordIndex].word"
+                      name="translation"
+                      label="Ваш перевод"
+                      :is-disabled="inputDisabled"
+                      :on-change="valueChanged"
             ></AppInput>
             <Button :disabled="confirmButtonDisabled"
-                    :on-click="checkOption"
+                    :on-click="checkValue"
                     type="button"
                     title="Подтвердить"
             ></Button>
@@ -25,7 +21,7 @@
             ></Button>
             <div class="result">{{ result }}</div>
         </div>
-        <div v-else class="options-test__empty">Слова закончились</div>
+        <div v-else class="input-test__empty">Слова закончились</div>
     </section>
 </template>
 
@@ -34,17 +30,10 @@
     import Button from '../Elements/Button/Button';
 
     export default {
-        name: "OptionsTest",
+        name: "InputTest",
         components: {
             AppInput,
             Button
-        },
-        props: {
-            optionsCount: {
-                type: Number,
-                required: false,
-                default: 4
-            }
         },
         data() {
             return {
@@ -106,14 +95,12 @@
                         translations: ['спать']
                     },
                 ],
-                optionsWords: [],
-                options: [],
+                currentWordIndex: 0,
                 confirmButtonDisabled: true,
                 nextButtonDisabled: true,
-                optionDisabled: false,
-                currentWordIndex: 0,
-                optionsKeyValue: 0,
-                checkedOptionCorrect: false,
+                inputDisabled: false,
+                inputValue: '',
+                inputValueIsCorrect: false,
                 result: ''
             };
         },
@@ -128,84 +115,51 @@
                     array[i] = temp;
                 }
             },
-            setOptions() {
-                this.options = [];
-                const randomCorrectTranslationIndex = Math.floor(
-                    Math.random() * this.words[this.currentWordIndex].translations.length
-                );
-                const correctTranslation = this.words[this.currentWordIndex].translations[randomCorrectTranslationIndex];
-
-                this.options.push({
-                    checked: false,
-                    value: correctTranslation
-                });
-
-                while (this.options.length < this.optionsCount) {
-                    const randomTranslationIndex = Math.floor(Math.random() * this.optionsWords.length);
-                    const randomTranslation = this.optionsWords[randomTranslationIndex];
-                    const isExist = this.options.find((option) => option.value === randomTranslation);
-                    const isInCorrectTranslations = this.words[this.currentWordIndex].translations
-                        .find((translation) => translation === randomTranslation);
-
-                    if (isExist || isInCorrectTranslations) {
-                        continue;
-                    }
-
-                    this.options.push({
-                        checked: false,
-                        value: randomTranslation
-                    });
-                }
-
-                this.mixArray(this.options);
-            },
-            optionChecked(checkedOptionIndex) {
+            valueChanged(evt) {
                 if (this.confirmButtonDisabled) {
                     this.confirmButtonDisabled = false;
                 }
 
-                this.options.forEach((option, index) => {
-                    option.checked = index === checkedOptionIndex;
-                });
+                this.inputValue = evt.target.value.toLowerCase();
             },
-            checkOption() {
-                this.optionDisabled = true;
+            checkValue() {
+                this.inputDisabled = true;
                 this.confirmButtonDisabled = true;
                 this.nextButtonDisabled = false;
+                this.inputValueIsCorrect = false;
 
-                const checkedOptionValue = (this.options.find((option) => option.checked)).value;
-                this.checkedOptionCorrect = this.words[this.currentWordIndex].translations.includes(checkedOptionValue);
+                for (let translation of this.words[this.currentWordIndex].translations) {
+                    translation = translation.toLowerCase();
 
-                this.result = this.checkedOptionCorrect ? 'Верно!' : 'Тююю, не верно...';
+                    if (translation === this.inputValue) {
+                        this.inputValueIsCorrect = true;
+                        break;
+                    }
+                }
+
+                this.result = this.inputValueIsCorrect ? `Верно, это ${this.inputValue}` : 'Тююю, не верно...';
             },
             nextWord() {
                 if (this.words.length > 0) {
-                    this.optionsKeyValue++;
-
-                    if (this.checkedOptionCorrect) {
+                    if (this.inputValueIsCorrect) {
                         this.words.splice(this.currentWordIndex, 1);
                     }
 
                     if (this.words.length > 0) {
-                        this.currentWordIndex = Math.floor(Math.random() * this.words.length);
-                        this.setOptions();
-                        this.optionDisabled = false;
-                        this.nextButtonDisabled = true;
                         this.result = '';
+                        this.currentWordIndex = Math.floor(Math.random() * this.words.length);
+                        this.inputDisabled = false;
+                        this.nextButtonDisabled = true;
                     }
                 }
             }
         },
         beforeMount() {
-            this.words.forEach((word) => {
-                this.optionsWords = this.optionsWords.concat(word.translations);
-            });
-
-            this.mixArray(this.optionsWords);
             this.mixArray(this.words);
-            this.setOptions();
         }
     }
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+
+</style>
