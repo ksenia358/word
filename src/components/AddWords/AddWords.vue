@@ -1,5 +1,6 @@
 <template>
   <div class="">
+    {{state.list}}
     <template v-if="state.finish==true && state.test==null">
       <p>Будет ли у вас проверочный диктант?</p>
       <Button id="yes"
@@ -283,9 +284,9 @@ export default {
           createObj()
         }
         if ((this.state.list[this.state.indexWord].translation.length !== 0 || valueTextarea!=='') && valueInput!=='') {
+          let valTextarea = valueTextarea.replace(/\s+/g, ' ').trim();
           if (valueTextarea!=='') {
-            let valTextarea = valueTextarea.replace(/\s+/g, ' ').trim();
-            this.state.list[this.state.indexWord].translation[this.state.count] = valTextarea;
+            this.state.list[this.state.indexWord].translation.push(valTextarea);
           }
           validData()
         }
