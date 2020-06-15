@@ -1,6 +1,5 @@
 <template>
   <div class="">
-    {{state.list}}
     <template v-if="state.finish==true && state.test==null">
       <p>Будет ли у вас проверочный диктант?</p>
       <Button id="yes"
@@ -40,6 +39,7 @@
                 :on-change="InputChange"
       ></AppInput>
       <div class="red" v-show="state.word.error==true && state.word.buttonClick==true">Введите слово</div>
+      <div class="red" v-show="state.found==true">Это слово уже было добавлено</div>
       <div v-if="state.list[state.indexWord]">
         <div v-for="(n,key) in state.list[state.indexWord].translation" :key="key" class="listWords">
           <div class="medium" v-if="state.indexEdit!==key">{{n}}</div>
@@ -140,6 +140,7 @@ export default {
         list:[ { "word": "", "translation": [] } ],
         showEdit:false,
         indexEdit:null,
+        found: false,
         word: {
           error: true,
           buttonClick: false
@@ -236,6 +237,7 @@ export default {
       }
     },
     addWord(){
+      this.state.found = false;
       const noWord = () => {
             this.state.word.buttonClick = true;
             this.state.word.error = true;
@@ -259,19 +261,12 @@ export default {
           valueTextarea = /^\s*$/.test(textarea.value) ? '':textarea.value,
           valueInput = /^\s*$/.test(input.value) ? '':input.value,
           validData = () => {
-            let valInput = valueInput.trim();
-
-
-
             this.state.word.buttonClick = false;
             this.state.word.error = true;
             this.state.translation.buttonClick = false;
             this.state.translation.error = true;
-            this.state.list[this.state.indexWord].word = valInput;
-            this.state.list[this.state.indexWord].translation = this.state.list[this.state.indexWord].translation.filter(el => el !== null);
             this.state.indexWord=this.state.list.length
             this.state.showForm = false;
-            this.state.add = true;
           },
           createObj = () => {
             let obj={
@@ -287,8 +282,20 @@ export default {
           let valTextarea = valueTextarea.trim();
           if (valueTextarea!=='') {
             this.state.list[this.state.indexWord].translation.push(valTextarea);
+            textarea.value='';
           }
-          validData()
+          let valInput = valueInput.trim();
+          for (let i=0; i<this.state.list.length;i++) {
+            if (this.state.list[i].word === valInput && i!==this.state.indexWord) {
+              this.state.found = true;
+              break
+            }
+          }
+          if (!this.state.found) {
+            this.state.list[this.state.indexWord].word = valInput;
+            this.state.list[this.state.indexWord].translation = this.state.list[this.state.indexWord].translation.filter(el => el !== null);
+            validData()
+          }
         }
         else if ((this.state.list[this.state.indexWord].translation.length !== 0 || valueTextarea!=='') && valueInput=='') {
           noWord()
@@ -309,6 +316,7 @@ export default {
         this.state.list.push(obj);
       }
       this.state.showForm=true;
+      this.state.found = false
     },
     editAddedWord(evt, key){
       this.state.showForm=true;
