@@ -4,22 +4,13 @@
         <div v-if="words.length > 0" class="input-test__wrapper">
             <span class="input-test__word">{{ words[currentWordIndex].word }}</span>
             <AppInput :id="words[currentWordIndex].word"
+                      :value="inputValue"
                       name="translation"
                       label="Ваш перевод"
                       :is-disabled="inputDisabled"
-                      :on-change="valueChanged"
+                      :on-change="checkValue"
+                      :class="inputClass"
             ></AppInput>
-            <Button :disabled="confirmButtonDisabled"
-                    :on-click="checkValue"
-                    type="button"
-                    title="Подтвердить"
-            ></Button>
-            <Button :disabled="nextButtonDisabled"
-                    :on-click="nextWord"
-                    type="button"
-                    title="Далее"
-            ></Button>
-            <div class="result">{{ result }}</div>
         </div>
         <div v-else class="input-test__empty">Слова закончились</div>
     </section>
@@ -27,13 +18,11 @@
 
 <script>
     import AppInput from '../Elements/Input/AppInput';
-    import Button from '../Elements/Button/Button';
 
     export default {
         name: "InputTest",
         components: {
-            AppInput,
-            Button
+            AppInput
         },
         data() {
             return {
@@ -96,12 +85,10 @@
                     },
                 ],
                 currentWordIndex: 0,
-                confirmButtonDisabled: true,
-                nextButtonDisabled: true,
                 inputDisabled: false,
                 inputValue: '',
                 inputValueIsCorrect: false,
-                result: ''
+                inputClass: ''
             };
         },
         methods: {
@@ -115,18 +102,11 @@
                     array[i] = temp;
                 }
             },
-            valueChanged(evt) {
-                if (this.confirmButtonDisabled) {
-                    this.confirmButtonDisabled = false;
-                }
-
-                this.inputValue = evt.target.value.toLowerCase();
-            },
-            checkValue() {
+            checkValue(evt) {
                 this.inputDisabled = true;
-                this.confirmButtonDisabled = true;
-                this.nextButtonDisabled = false;
                 this.inputValueIsCorrect = false;
+
+                this.inputValue = evt.target.value;
 
                 for (let translation of this.words[this.currentWordIndex].translations) {
                     translation = translation.toLowerCase();
@@ -137,7 +117,9 @@
                     }
                 }
 
-                this.result = this.inputValueIsCorrect ? `Верно, это ${this.inputValue}` : 'Тююю, не верно...';
+                this.inputClass = this.inputValueIsCorrect ? 'input--success' : 'input--error';
+
+                setTimeout(this.nextWord, 1500);
             },
             nextWord() {
                 if (this.words.length > 0) {
@@ -146,10 +128,10 @@
                     }
 
                     if (this.words.length > 0) {
-                        this.result = '';
+                        this.inputValue = '';
+                        this.inputClass = '';
                         this.currentWordIndex = Math.floor(Math.random() * this.words.length);
                         this.inputDisabled = false;
-                        this.nextButtonDisabled = true;
                     }
                 }
             }

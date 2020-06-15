@@ -3,7 +3,7 @@
         <h2 class="visually-hidden">Тест с вариантами</h2>
         <div v-if="words.length > 0" class="options-test__wrapper">
             <span class="options-test__word">{{ words[currentWordIndex].word }}</span>
-            <AppInput v-for="(option, index) in options"
+            <AppInput v-for="option in options"
                       :key="option.value + optionsKeyValue"
                       type="radio"
                       :value="option.value"
@@ -11,19 +11,8 @@
                       name="option"
                       :label="option.value"
                       :is-disabled="optionDisabled"
-                      :on-change="optionChecked.bind(null, index)"
+                      :on-change="checkOption"
             ></AppInput>
-            <Button :disabled="confirmButtonDisabled"
-                    :on-click="checkOption"
-                    type="button"
-                    title="Подтвердить"
-            ></Button>
-            <Button :disabled="nextButtonDisabled"
-                    :on-click="nextWord"
-                    type="button"
-                    title="Далее"
-            ></Button>
-            <div class="result">{{ result }}</div>
         </div>
         <div v-else class="options-test__empty">Слова закончились</div>
     </section>
@@ -31,13 +20,11 @@
 
 <script>
     import AppInput from '../Elements/Input/AppInput';
-    import Button from '../Elements/Button/Button';
 
     export default {
         name: "OptionsTest",
         components: {
-            AppInput,
-            Button
+            AppInput
         },
         props: {
             optionsCount: {
@@ -108,13 +95,11 @@
                 ],
                 optionsWords: [],
                 options: [],
-                confirmButtonDisabled: true,
-                nextButtonDisabled: true,
                 optionDisabled: false,
                 currentWordIndex: 0,
                 optionsKeyValue: 0,
                 checkedOptionCorrect: false,
-                result: ''
+                inputClass: ''
             };
         },
         methods: {
@@ -159,24 +144,16 @@
 
                 this.mixArray(this.options);
             },
-            optionChecked(checkedOptionIndex) {
-                if (this.confirmButtonDisabled) {
-                    this.confirmButtonDisabled = false;
-                }
+            checkOption(evt) {
+                const checkedOptionValue = evt.target.value;
 
-                this.options.forEach((option, index) => {
-                    option.checked = index === checkedOptionIndex;
-                });
-            },
-            checkOption() {
                 this.optionDisabled = true;
-                this.confirmButtonDisabled = true;
-                this.nextButtonDisabled = false;
-
-                const checkedOptionValue = (this.options.find((option) => option.checked)).value;
                 this.checkedOptionCorrect = this.words[this.currentWordIndex].translations.includes(checkedOptionValue);
+                this.inputClass = this.checkedOptionCorrect ? 'input--success' : 'input--error';
 
-                this.result = this.checkedOptionCorrect ? 'Верно!' : 'Тююю, не верно...';
+                evt.target.classList.add(this.inputClass);
+
+                setTimeout(this.nextWord, 1500);
             },
             nextWord() {
                 if (this.words.length > 0) {
@@ -187,11 +164,10 @@
                     }
 
                     if (this.words.length > 0) {
+                        this.inputClass = '';
                         this.currentWordIndex = Math.floor(Math.random() * this.words.length);
                         this.setOptions();
                         this.optionDisabled = false;
-                        this.nextButtonDisabled = true;
-                        this.result = '';
                     }
                 }
             }
