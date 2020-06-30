@@ -20,6 +20,7 @@
 
 <script>
     import AppInput from '../Elements/Input/AppInput';
+    import {mapGetters} from 'vuex';
 
     export default {
         name: "OptionsTest",
@@ -35,64 +36,6 @@
         },
         data() {
             return {
-                words: [
-                    {
-                        word: 'cat',
-                        translations: ['кошка', 'кот']
-                    },
-                    {
-                        word: 'car',
-                        translations: ['автомобиль', 'машина']
-                    },
-                    {
-                        word: 'table',
-                        translations: ['таблица', 'стол']
-                    },
-                    {
-                        word: 'row',
-                        translations: ['ряд']
-                    },
-                    {
-                        word: 'sacrifice',
-                        translations: ['жертва']
-                    },
-                    {
-                        word: 'honor',
-                        translations: ['честь']
-                    },
-                    {
-                        word: 'hope',
-                        translations: ['надежда']
-                    },
-                    {
-                        word: 'promise',
-                        translations: ['обещание']
-                    },
-                    {
-                        word: 'dog',
-                        translations: ['собака']
-                    },
-                    {
-                        word: 'sky',
-                        translations: ['небо']
-                    },
-                    {
-                        word: 'shadow',
-                        translations: ['тень']
-                    },
-                    {
-                        word: 'flower',
-                        translations: ['цветок']
-                    },
-                    {
-                        word: 'sheep',
-                        translations: ['корабль']
-                    },
-                    {
-                        word: 'sleep',
-                        translations: ['спать']
-                    },
-                ],
                 optionsWords: [],
                 options: [],
                 optionDisabled: false,
@@ -101,6 +44,11 @@
                 checkedOptionCorrect: false,
                 inputClass: ''
             };
+        },
+        computed: {
+            ...mapGetters('words', {
+                words: 'words'
+            })
         },
         methods: {
             mixArray(array) {
