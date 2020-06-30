@@ -1,0 +1,24 @@
+.tests {
+  width: 100%;
+}
+
+.tests__list {
+  display: flex;
+  justify-content: space-between;
+}
+
+.test__list-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 49%;
+  padding: 15px;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+}

@@ -31,12 +31,8 @@ export default {
           route: '/add'
         },
         {
-          name: 'Тест',
-          route: '/test'
-        },
-        {
-          name: 'Тест с вводом',
-          route: '/test-inp'
+          name: 'Тесты',
+          route: '/tests'
         }
       ]
     };

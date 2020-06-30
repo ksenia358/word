@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import AppInput from '../Elements/Input/AppInput';
+    import AppInput from '../../Elements/Input/AppInput';
     import {mapGetters} from 'vuex';
 
     export default {

@@ -4,18 +4,23 @@ import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
 import AddWords from './components/AddWords/AddWords';
-import InputTest from './components/Tests/InputTest';
-import OptionsTest from './components/Tests/OptionsTest';
+import Tests from './components/Tests/Tests';
+import InputTest from './components/Tests/TestsViews/InputTest';
+import OptionsTest from './components/Tests/TestsViews/OptionsTest';
 
 export default new VueRouter({
     mode: 'history',
     routes: [
         {
-            path: '/test',
+            path: '/tests',
+            component: Tests
+        },
+        {
+            path: '/tests/option',
             component: OptionsTest
         },
         {
-            path: '/test-inp',
+            path: '/tests/input',
             component: InputTest
         },
         {
